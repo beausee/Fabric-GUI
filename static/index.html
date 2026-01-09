@@ -609,7 +609,7 @@
         <!-- CLI Tab -->
         <div id="tab-cli" class="tab-content">
           <label for="cliCommand">Raw Fabric Command</label>
-          <textarea id="cliCommand" placeholder="Enter raw fabric command arguments, e.g.: -p summarize -m gpt-4" style="min-height: 120px;"></textarea>
+          <textarea id="cliCommand" placeholder="Enter raw fabric command arguments, e.g.: -p summarize -m gpt-4" style="min-height: 100px;"></textarea>
 
           <div class="small" style="margin-top: 0.5rem;">
             <strong>Examples:</strong><br>
@@ -619,6 +619,13 @@
             • -u https://example.com -p summarize<br>
             <br>
             Note: Type only the arguments (don't include "fabric" at the start)
+          </div>
+
+          <label for="cliInput" style="margin-top: 1rem;">Input Text (Optional - will be piped to fabric)</label>
+          <textarea id="cliInput" placeholder="Enter text to process... (leave empty if using -u, -y, or other input flags)" style="min-height: 150px;"></textarea>
+
+          <div class="small" style="margin-top: 0.5rem;">
+            💡 <strong>Tip:</strong> Press the "Run Pattern" button below to execute your command
           </div>
         </div>
 
@@ -1180,6 +1187,8 @@
       // Check if we're in CLI mode
       if (currentTab === 'cli') {
         const cliCmd = document.getElementById('cliCommand').value.trim();
+        const cliInput = document.getElementById('cliInput').value.trim();
+
         if (!cliCmd) {
           alert('Please enter a command');
           return;
@@ -1192,10 +1201,15 @@
         stderrEl.textContent = '';
 
         try {
+          const requestBody = { args: cliCmd };
+          if (cliInput) {
+            requestBody.input_text = cliInput;
+          }
+
           const resp = await fetch('/api/run', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ args: cliCmd })
+            body: JSON.stringify(requestBody)
           });
 
           const data = await resp.json();
@@ -1434,6 +1448,7 @@
       document.getElementById('inputUrl').value = '';
       document.getElementById('youtubeUrl').value = '';
       document.getElementById('cliCommand').value = '';
+      document.getElementById('cliInput').value = '';
       selectedPattern = '';
       renderPatterns();
       

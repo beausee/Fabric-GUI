@@ -1,6 +1,7 @@
 import subprocess
 import os
 from pathlib import Path
+from typing import Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, FileResponse
@@ -57,6 +58,8 @@ class FabricRunRequest(BaseModel):
     # Raw arguments string the user types, e.g.:
     #   "-p 'summarize this' input.txt"
     args: str
+    # Optional input text to pipe to fabric (like echo "text" | fabric args)
+    input_text: Optional[str] = None
 
 
 class FabricPatternRequest(BaseModel):
@@ -488,8 +491,10 @@ async def run_fabric(req: FabricRunRequest):
     cmd = [FABRIC_PATH, *arg_list]
 
     try:
+        # If input_text is provided, pipe it to fabric via stdin
         result = subprocess.run(
             cmd,
+            input=req.input_text if req.input_text else None,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
