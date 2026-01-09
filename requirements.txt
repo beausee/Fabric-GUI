@@ -1,0 +1,14 @@
+# Fabric GUI Requirements
+
+# Web Framework
+fastapi==0.128.0
+uvicorn[standard]==0.40.0
+
+# CORS support
+# (included in fastapi)
+
+# Data validation
+pydantic==2.12.5
+
+# Optional but recommended
+python-multipart==0.0.21  # For file uploads (future feature)

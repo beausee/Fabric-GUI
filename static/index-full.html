@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fabric GUI - Complete</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0a0e1a;
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1f35 0%, #0a0e1a 100%);
+      padding: 1.5rem 2rem;
+      border-bottom: 2px solid #2d3748;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.3rem;
+    }
+
+    .subtitle {
+      color: #94a3b8;
+      font-size: 0.9rem;
+    }
+
+    .container {
+      max-width: 1900px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .panel {
+      background: #1a1f35;
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid #2d3748;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    h2 {
+      color: #60a5fa;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #2d3748;
+    }
+
+    h3 {
+      color: #a78bfa;
+      font-size: 1.1rem;
+      margin: 1.5rem 0 0.75rem 0;
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h3::before {
+      content: '▼';
+      font-size: 0.8rem;
+      transition: transform 0.2s;
+    }
+
+    h3.collapsed::before {
+      transform: rotate(-90deg);
+    }
+
+    label {
+      display: block;
+      margin: 0.75rem 0 0.4rem 0;
+      font-size: 0.85rem;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid #374151;
+      background: #0a0e1a;
+      color: #e2e8f0;
+      font-family: inherit;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #60a5fa;
+      box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+    }
+
+    textarea {
+      font-family: 'Menlo', 'Monaco', monospace;
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0.5rem 0;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+
+    .checkbox-group label {
+      margin: 0;
+      cursor: pointer;
+    }
+
+    button {
+      padding: 0.7rem 1.5rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin: 0.5rem 0.5rem 0 0;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(96, 165, 250, 0.4);
+    }
+
+    .btn-secondary {
+      background: #374151;
+      color: #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-info {
+      background: #06b6d4;
+      color: white;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #2d3748;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 0.7rem 1.2rem;
+      background: transparent;
+      color: #94a3b8;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      margin: 0;
+    }
+
+    .tab.active {
+      color: #60a5fa;
+      border-bottom-color: #60a5fa;
+    }
+
+    .tab:hover {
+      color: #e2e8f0;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    pre {
+      background: #0a0e1a;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      border: 1px solid #2d3748;
+      max-height: 400px;
+      overflow-y: auto;
+      font-family: 'Menlo', 'Monaco', monospace;
+    }
+
+    .status {
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .status-info {
+      background: rgba(96, 165, 250, 0.1);
+      color: #60a5fa;
+      border: 1px solid #60a5fa;
+    }
+
+    .status-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: #10b981;
+      border: 1px solid #10b981;
+    }
+
+    .status-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    .command-preview {
+      background: #0a0e1a;
+      padding: 1rem;
+      border-radius: 8px;
+      font-family: 'Menlo', 'Monaco', monospace;
+      font-size: 0.8rem;
+      color: #60a5fa;
+      border: 1px solid #2d3748;
+      margin-top: 1rem;
+      word-wrap: break-word;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .section {
+      margin-bottom: 1.5rem;
+    }
+
+    .section-content {
+      margin-top: 0.75rem;
+    }
+
+    .section-content.collapsed {
+      display: none;
+    }
+
+    .search-input {
+      margin-bottom: 0.5rem;
+    }
+
+    .small {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      margin-top: 0.25rem;
+    }
+
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 3px solid rgba(96, 165, 250, 0.3);
+      border-top-color: #60a5fa;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .pattern-list {
+      height: 200px;
+      overflow-y: auto;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      padding: 0.5rem;
+      background: #0a0e1a;
+    }
+
+    .pattern-item {
+      padding: 0.5rem;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.2s;
+      font-size: 0.85rem;
+    }
+
+    .pattern-item:hover {
+      background: #1a1f35;
+    }
+
+    .pattern-item.selected {
+      background: #2d3748;
+      color: #60a5fa;
+    }
+
+    .variable-input {
+      background: #1a1f35;
+      padding: 0.75rem;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      border: 1px solid #2d3748;
+    }
+
+    .variable-input input {
+      margin-top: 0.25rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #2d3748;
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #60a5fa;
+      cursor: pointer;
+    }
+
+    .range-value {
+      display: inline-block;
+      min-width: 50px;
+      text-align: right;
+      color: #60a5fa;
+      font-weight: 600;
+    }
+
+    .output-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .scrollable {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #1a1f35;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #2d3748;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #374151;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Fabric GUI - Complete Edition</h1>
+    <div class="subtitle">Full-Featured Interface with ALL 78+ CLI Parameters</div>
+  </header>
+
+  <div class="container">
+    <div class="grid">
+      <!-- Left Sidebar: Pattern & Model Selection -->
+      <div class="panel scrollable">
+        <h2>Pattern & Model</h2>
+        
+        <label for="patternSearch">Search Patterns</label>
+        <input type="text" id="patternSearch" class="search-input" placeholder="Type to filter...">
+        
+        <label>Available Patterns (<span id="patternCount">0</span>)</label>
+        <div class="pattern-list" id="patternList">
+          <div class="small">Loading patterns...</div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 1rem;">
+          <div>
+            <label for="modelSelect">AI Model</label>
+            <select id="modelSelect">
+              <option value="">Default Model</option>
+            </select>
+          </div>
+          <div>
+            <label for="vendorSelect">Vendor</label>
+            <select id="vendorSelect">
+              <option value="">Auto</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div>
+            <label for="contextSelect">Context</label>
+            <select id="contextSelect">
+              <option value="">None</option>
+            </select>
+          </div>
+          <div>
+            <label for="sessionSelect">Session</label>
+            <select id="sessionSelect">
+              <option value="">None</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="btn-group" style="margin-top: 1rem;">
+          <button class="btn-secondary" onclick="manageContextSession('context')">Manage Context</button>
+          <button class="btn-secondary" onclick="manageContextSession('session')">Manage Session</button>
+          <button class="btn-info" onclick="updatePatterns()">Update Patterns</button>
+        </div>
+      </div>
+
+      <!-- Right Main Area: Input & Configuration -->
+      <div class="panel scrollable">
+        <h2>Input & Configuration</h2>
+
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('text')">Text</button>
+          <button class="tab" onclick="switchTab('url')">URL</button>
+          <button class="tab" onclick="switchTab('youtube')">YouTube</button>
+          <button class="tab" onclick="switchTab('media')">Media</button>
+          <button class="tab" onclick="switchTab('image')">Image Gen</button>
+          <button class="tab" onclick="switchTab('advanced')">Advanced</button>
+        </div>
+
+        <!-- Text Input Tab -->
+        <div id="tab-text" class="tab-content active">
+          <label for="inputText">Text Input</label>
+          <textarea id="inputText" placeholder="Enter or paste your text here..."></textarea>
+          
+          <div id="patternVariables" style="margin-top: 1rem; display: none;">
+            <h3>Pattern Variables</h3>
+            <div id="variablesList"></div>
+          </div>
+        </div>
+
+        <!-- URL Tab -->
+        <div id="tab-url" class="tab-content">
+          <label for="inputUrl">Website URL</label>
+          <input type="url" id="inputUrl" placeholder="https://example.com/article">
+          
+          <label for="scrapeQuestion">Search Question (Optional)</label>
+          <input type="text" id="scrapeQuestion" placeholder="What to search for with Jina AI">
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="readabilityCheck">
+            <label for="readabilityCheck">Clean HTML (Readability mode)</label>
+          </div>
+        </div>
+
+        <!-- YouTube Tab -->
+        <div id="tab-youtube" class="tab-content">
+          <label for="youtubeUrl">YouTube URL</label>
+          <input type="url" id="youtubeUrl" placeholder="https://youtube.com/watch?v=...">
+          
+          <label for="ytDlpArgs">yt-dlp Arguments (Optional)</label>
+          <input type="text" id="ytDlpArgs" placeholder="e.g., --cookies-from-browser brave">
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="ytPlaylist">
+            <label for="ytPlaylist">Prefer playlist over video</label>
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="ytTimestamps">
+            <label for="ytTimestamps">Include timestamps in transcript</label>
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="ytComments">
+            <label for="ytComments">Extract video comments</label>
+          </div>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="ytMetadata">
+            <label for="ytMetadata">Get video metadata</label>
+          </div>
+        </div>
+
+        <!-- Media Processing Tab -->
+        <div id="tab-media" class="tab-content">
+          <label for="attachmentUrl">Attachment URL (for vision models)</label>
+          <input type="url" id="attachmentUrl" placeholder="https://example.com/image.jpg">
+          
+          <label for="transcribeFile">Audio/Video File to Transcribe</label>
+          <input type="text" id="transcribeFile" placeholder="/path/to/media/file">
+          
+          <label for="transcribeModel">Transcription Model</label>
+          <select id="transcribeModel">
+            <option value="">Default</option>
+          </select>
+          
+          <div class="checkbox-group">
+            <input type="checkbox" id="splitMedia">
+            <label for="splitMedia">Split large media files (>25MB)</label>
+          </div>
+        </div>
+
+        <!-- Image Generation Tab -->
+        <div id="tab-image" class="tab-content">
+          <label for="imageFile">Save Image To</label>
+          <input type="text" id="imageFile" placeholder="output.png">
+          
+          <div class="grid-2">
+            <div>
+              <label for="imageSize">Size</label>
+              <select id="imageSize">
+                <option value="">Auto</option>
+                <option value="1024x1024">1024x1024</option>
+                <option value="1536x1024">1536x1024</option>
+                <option value="1024x1536">1024x1536</option>
+              </select>
+            </div>
+            <div>
+              <label for="imageQuality">Quality</label>
+              <select id="imageQuality">
+                <option value="">Auto</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="grid-2">
+            <div>
+              <label for="imageCompression">Compression (0-100)</label>
+              <input type="number" id="imageCompression" min="0" max="100" placeholder="Auto">
+            </div>
+            <div>
+              <label for="imageBackground">Background</label>
+              <select id="imageBackground">
+                <option value="opaque">Opaque</option>
+                <option value="transparent">Transparent</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Options Tab -->
+        <div id="tab-advanced" class="tab-content">
+          <div class="section">
+            <h3 onclick="toggleSection('modelParams')">Model Parameters</h3>
+            <div id="modelParams" class="section-content">
+              <label for="temperature">Temperature: <span class="range-value" id="tempValue">0.7</span></label>
+              <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.7" oninput="updateRangeValue('temperature', 'tempValue')">
+              
+              <label for="topP">Top-P: <span class="range-value" id="topPValue">0.9</span></label>
+              <input type="range" id="topP" min="0" max="1" step="0.05" value="0.9" oninput="updateRangeValue('topP', 'topPValue')">
+              
+              <label for="presencePenalty">Presence Penalty: <span class="range-value" id="presValue">0.0</span></label>
+              <input type="range" id="presencePenalty" min="-2" max="2" step="0.1" value="0" oninput="updateRangeValue('presencePenalty', 'presValue')">
+              
+              <label for="frequencyPenalty">Frequency Penalty: <span class="range-value" id="freqValue">0.0</span></label>
+              <input type="range" id="frequencyPenalty" min="-2" max="2" step="0.1" value="0" oninput="updateRangeValue('frequencyPenalty', 'freqValue')">
+              
+              <label for="seed">Random Seed (Optional)</label>
+              <input type="number" id="seed" placeholder="Leave empty for random">
+              
+              <label for="contextLength">Context Length (Ollama only)</label>
+              <input type="number" id="contextLength" placeholder="e.g., 4096">
+              
+              <div class="checkbox-group">
+                <input type="checkbox" id="rawMode">
+                <label for="rawMode">Raw mode (use model defaults)</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3 onclick="toggleSection('thinkingOpts')">Thinking & Reasoning</h3>
+            <div id="thinkingOpts" class="section-content collapsed">
+              <label for="thinking">Thinking Level</label>
+              <select id="thinking">
+                <option value="">Default</option>
+                <option value="off">Off</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+              
+              <div class="checkbox-group">
+                <input type="checkbox" id="suppressThink">
+                <label for="suppressThink">Suppress thinking tags in output</label>
+              </div>
+              
+              <label for="thinkStartTag">Custom Think Start Tag</label>
+              <input type="text" id="thinkStartTag" placeholder="Default: <think>">
+              
+              <label for="thinkEndTag">Custom Think End Tag</label>
+              <input type="text" id="thinkEndTag" placeholder="Default: </think>">
+            </div>
+          </div>
+
+          <div class="section">
+            <h3 onclick="toggleSection('outputOpts')">Output Options</h3>
+            <div id="outputOpts" class="section-content collapsed">
+              <label for="outputFile">Save Output To File</label>
+              <input type="text" id="outputFile" placeholder="/path/to/output.txt">
+              
+              <label for="language">Language Code</label>
+              <input type="text" id="language" placeholder="e.g., en, zh, pt-BR">
+              
+              <label for="searchLocation">Search Location</label>
+              <input type="text" id="searchLocation" placeholder="e.g., America/Los_Angeles">
+              
+              <div class="checkbox-group">
+                <input type="checkbox" id="outputSession">
+                <label for="outputSession">Save entire session to file</label>
+              </div>
+              
+              <div class="checkbox-group">
+                <input type="checkbox" id="streamOutput">
+                <label for="streamOutput">Stream output in real-time</label>
+              </div>
+              
+              <div class="checkbox-group">
+                <input type="checkbox" id="copyOutput">
+                <label for="copyOutput">Copy to clipboard</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3 onclick="toggleSection('ttsOpts')">Text-to-Speech</h3>
+            <div id="ttsOpts" class="section-content collapsed">
+              <label for="voice">TTS Voice</label>
+              <select id="voice">
+                <option value="">Default (Kore)</option>
+              </select>
+              <button class="btn-secondary" onclick="loadVoices()">Load Voices</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3 onclick="toggleSection('strategyOpts')">Strategy & Extensions</h3>
+            <div id="strategyOpts" class="section-content collapsed">
+              <label for="strategy">Strategy</label>
+              <select id="strategy">
+                <option value="">None</option>
+              </select>
+              
+              <button class="btn-secondary" onclick="loadStrategies()">Load Strategies</button>
+              <button class="btn-secondary" onclick="loadExtensions()">View Extensions</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <h3 onclick="toggleSection('debugOpts')">Debugging & System</h3>
+            <div id="debugOpts" class="section-content collapsed">
+              <label for="debugLevel">Debug Level</label>
+              <select id="debugLevel">
+                <option value="">Off</option>
+                <option value="1">1 - Basic</option>
+                <option value="2">2 - Detailed</option>
+                <option value="3">3 - Trace</option>
+              </select>
+              
+              <label for="notificationCmd">Notification Command (Optional)</label>
+              <input type="text" id="notificationCmd" placeholder="Custom notification command">
+              
+              <div class="checkbox-group">
+                <input type="checkbox" id="notification">
+                <label for="notification">Desktop notifications</label>
+              </div>
+              
+              <div class="checkbox-group">
+                <input type="checkbox" id="searchEnable">
+                <label for="searchEnable">Enable web search</label>
+              </div>
+              
+              <div class="checkbox-group">
+                <input type="checkbox" id="dryRun">
+                <label for="dryRun">Dry run (preview only)</label>
+              </div>
+              
+              <div class="checkbox-group">
+                <input type="checkbox" id="disableResponsesApi">
+                <label for="disableResponsesApi">Disable OpenAI Responses API</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="command-preview">
+          <strong>Command Preview:</strong><br>
+          <span id="commandPreview">fabric</span>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-primary" onclick="runFabric()">Run Pattern</button>
+          <button class="btn-secondary" onclick="clearAll()">Clear All</button>
+          <button class="btn-info" onclick="copyCommand()">Copy Command</button>
+        </div>
+
+        <div id="status"></div>
+      </div>
+    </div>
+
+    <!-- Output Section -->
+    <div class="panel full-width">
+      <h2>Output</h2>
+
+      <div class="output-actions">
+        <button class="btn-success" onclick="copyOutput()">Copy Output</button>
+        <button class="btn-secondary" onclick="downloadOutput()">Download</button>
+        <button class="btn-danger" onclick="clearOutput()">Clear</button>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="switchOutputTab('stdout')">Result</button>
+        <button class="tab" onclick="switchOutputTab('stderr')">Errors</button>
+        <button class="tab" onclick="switchOutputTab('both')">Both</button>
+      </div>
+
+      <div id="output-stdout" class="tab-content active">
+        <pre id="stdout">Output will appear here...</pre>
+      </div>
+
+      <div id="output-stderr" class="tab-content">
+        <pre id="stderr">Errors will appear here...</pre>
+      </div>
+
+      <div id="output-both" class="tab-content">
+        <h3>stdout:</h3>
+        <pre id="stdout-both"></pre>
+        <h3>stderr:</h3>
+        <pre id="stderr-both"></pre>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global state
+    let patterns = [];
+    let models = [];
+    let vendors = [];
+    let contexts = [];
+    let sessions = [];
+    let selectedPattern = '';
+    let lastOutput = { stdout: '', stderr: '' };
+
+    // Initialize
+    async function init() {
+      await Promise.all([
+        loadPatterns(),
+        loadModels(),
+        loadVendors(),
+        loadContexts(),
+        loadSessions(),
+        loadTranscriptionModels()
+      ]);
+      updateCommandPreview();
+      
+      // Add event listeners for auto-update
+      document.querySelectorAll('input, select, textarea').forEach(el => {
+        el.addEventListener('change', updateCommandPreview);
+        el.addEventListener('input', updateCommandPreview);
+      });
+    }
+
+    // Load data functions
+    async function loadPatterns() {
+      try {
+        const resp = await fetch('/api/patterns');
+        const data = await resp.json();
+        patterns = data.patterns || [];
+        document.getElementById('patternCount').textContent = patterns.length;
+        renderPatterns();
+      } catch (err) {
+        console.error('Failed to load patterns:', err);
+      }
+    }
+
+    function renderPatterns() {
+      const container = document.getElementById('patternList');
+      const search = document.getElementById('patternSearch').value.toLowerCase();
+      
+      const filtered = patterns.filter(p => p.toLowerCase().includes(search));
+      
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="small">No patterns found</div>';
+        return;
+      }
+      
+      container.innerHTML = filtered.map(pattern => 
+        `<div class="pattern-item ${pattern === selectedPattern ? 'selected' : ''}" 
+              onclick="selectPattern('${pattern}')">${pattern}</div>`
+      ).join('');
+    }
+
+    function selectPattern(pattern) {
+      selectedPattern = pattern;
+      renderPatterns();
+      updateCommandPreview();
+      
+      // TODO: Load pattern variables if available
+      document.getElementById('patternVariables').style.display = 'none';
+    }
+
+    document.getElementById('patternSearch').addEventListener('input', renderPatterns);
+
+    async function loadModels() {
+      try {
+        const resp = await fetch('/api/models');
+        const data = await resp.json();
+        models = data.models || [];
+        populateSelect('modelSelect', models.filter(m => !m.startsWith('Available') && !m.startsWith('[')), 'Default Model');
+      } catch (err) {
+        console.error('Failed to load models:', err);
+      }
+    }
+
+    async function loadVendors() {
+      try {
+        const resp = await fetch('/api/vendors');
+        const data = await resp.json();
+        vendors = data.vendors || [];
+        populateSelect('vendorSelect', vendors, 'Auto');
+      } catch (err) {
+        console.error('Failed to load vendors:', err);
+      }
+    }
+
+    async function loadContexts() {
+      try {
+        const resp = await fetch('/api/contexts');
+        const data = await resp.json();
+        contexts = data.contexts || [];
+        populateSelect('contextSelect', contexts, 'None');
+      } catch (err) {
+        console.error('Failed to load contexts:', err);
+      }
+    }
+
+    async function loadSessions() {
+      try {
+        const resp = await fetch('/api/sessions');
+        const data = await resp.json();
+        sessions = data.sessions || [];
+        populateSelect('sessionSelect', sessions, 'None');
+      } catch (err) {
+        console.error('Failed to load sessions:', err);
+      }
+    }
+
+    async function loadTranscriptionModels() {
+      try {
+        const resp = await fetch('/api/transcription-models');
+        const data = await resp.json();
+        populateSelect('transcribeModel', data.models || [], 'Default');
+      } catch (err) {
+        console.error('Failed to load transcription models:', err);
+      }
+    }
+
+    async function loadVoices() {
+      try {
+        const resp = await fetch('/api/voices');
+        const data = await resp.json();
+        populateSelect('voice', data.voices || [], 'Default (Kore)');
+        alert('Voices loaded: ' + data.voices.length);
+      } catch (err) {
+        alert('Failed to load voices: ' + err);
+      }
+    }
+
+    async function loadStrategies() {
+      try {
+        const resp = await fetch('/api/strategies');
+        const data = await resp.json();
+        populateSelect('strategy', data.strategies || [], 'None');
+        alert('Strategies loaded: ' + data.strategies.length);
+      } catch (err) {
+        alert('Failed to load strategies: ' + err);
+      }
+    }
+
+    async function loadExtensions() {
+      try {
+        const resp = await fetch('/api/extensions');
+        const data = await resp.json();
+        alert('Extensions:\n' + (data.extensions.length > 0 ? data.extensions.join('\n') : 'None registered'));
+      } catch (err) {
+        alert('Failed to load extensions: ' + err);
+      }
+    }
+
+    function populateSelect(id, items, defaultLabel) {
+      const select = document.getElementById(id);
+      select.innerHTML = `<option value="">${defaultLabel}</option>`;
+      items.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item;
+        option.textContent = item;
+        select.appendChild(option);
+      });
+    }
+
+    // Tab switching
+    let currentTab = 'text';
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tab}`).classList.add('active');
+      updateCommandPreview();
+    }
+
+    function switchOutputTab(tab) {
+      document.querySelectorAll('#output-stdout, #output-stderr, #output-both').forEach(t => {
+        t.classList.remove('active');
+      });
+      document.querySelectorAll('.output-actions + .tabs .tab').forEach(t => {
+        t.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      document.getElementById(`output-${tab}`).classList.add('active');
+    }
+
+    // Section toggling
+    function toggleSection(id) {
+      const section = document.getElementById(id);
+      const header = event.target;
+      
+      if (section.classList.contains('collapsed')) {
+        section.classList.remove('collapsed');
+        header.classList.remove('collapsed');
+      } else {
+        section.classList.add('collapsed');
+        header.classList.add('collapsed');
+      }
+    }
+
+    // Range value updates
+    function updateRangeValue(rangeId, valueId) {
+      const value = document.getElementById(rangeId).value;
+      document.getElementById(valueId).textContent = value;
+      updateCommandPreview();
+    }
+
+    // Command preview
+    function updateCommandPreview() {
+      let cmd = 'fabric';
+      
+      if (selectedPattern) cmd += ` -p "${selectedPattern}"`;
+      
+      const model = document.getElementById('modelSelect').value;
+      if (model) cmd += ` -m "${model}"`;
+      
+      const vendor = document.getElementById('vendorSelect').value;
+      if (vendor) cmd += ` -V "${vendor}"`;
+      
+      const context = document.getElementById('contextSelect').value;
+      if (context) cmd += ` -C "${context}"`;
+      
+      const session = document.getElementById('sessionSelect').value;
+      if (session) cmd += ` --session "${session}"`;
+      
+      // Model parameters
+      const temp = document.getElementById('temperature').value;
+      if (temp && temp != 0.7) cmd += ` -t ${temp}`;
+      
+      const topP = document.getElementById('topP').value;
+      if (topP && topP != 0.9) cmd += ` -T ${topP}`;
+      
+      const presPen = document.getElementById('presencePenalty').value;
+      if (presPen && presPen != 0) cmd += ` -P ${presPen}`;
+      
+      const freqPen = document.getElementById('frequencyPenalty').value;
+      if (freqPen && freqPen != 0) cmd += ` -F ${freqPen}`;
+      
+      const seed = document.getElementById('seed').value;
+      if (seed) cmd += ` -e ${seed}`;
+      
+      const contextLen = document.getElementById('contextLength').value;
+      if (contextLen) cmd += ` --modelContextLength ${contextLen}`;
+      
+      if (document.getElementById('rawMode').checked) cmd += ' -r';
+      
+      // Input methods
+      if (currentTab === 'url') {
+        const url = document.getElementById('inputUrl').value;
+        if (url) cmd += ` -u "${url}"`;
+        
+        const question = document.getElementById('scrapeQuestion').value;
+        if (question) cmd += ` -q "${question}"`;
+        
+        if (document.getElementById('readabilityCheck').checked) cmd += ' --readability';
+      } else if (currentTab === 'youtube') {
+        const ytUrl = document.getElementById('youtubeUrl').value;
+        if (ytUrl) cmd += ` -y "${ytUrl}"`;
+        
+        if (document.getElementById('ytPlaylist').checked) cmd += ' --playlist';
+        if (document.getElementById('ytTimestamps').checked) cmd += ' --transcript-with-timestamps';
+        if (document.getElementById('ytComments').checked) cmd += ' --comments';
+        if (document.getElementById('ytMetadata').checked) cmd += ' --metadata';
+        
+        const ytArgs = document.getElementById('ytDlpArgs').value;
+        if (ytArgs) cmd += ` --yt-dlp-args "${ytArgs}"`;
+      } else if (currentTab === 'media') {
+        const attachment = document.getElementById('attachmentUrl').value;
+        if (attachment) cmd += ` -a "${attachment}"`;
+        
+        const transcribe = document.getElementById('transcribeFile').value;
+        if (transcribe) cmd += ` --transcribe-file "${transcribe}"`;
+        
+        const transModel = document.getElementById('transcribeModel').value;
+        if (transModel) cmd += ` --transcribe-model "${transModel}"`;
+        
+        if (document.getElementById('splitMedia').checked) cmd += ' --split-media-file';
+      } else if (currentTab === 'image') {
+        const imgFile = document.getElementById('imageFile').value;
+        if (imgFile) cmd += ` --image-file "${imgFile}"`;
+        
+        const imgSize = document.getElementById('imageSize').value;
+        if (imgSize) cmd += ` --image-size ${imgSize}`;
+        
+        const imgQual = document.getElementById('imageQuality').value;
+        if (imgQual) cmd += ` --image-quality ${imgQual}`;
+        
+        const imgComp = document.getElementById('imageCompression').value;
+        if (imgComp) cmd += ` --image-compression ${imgComp}`;
+        
+        const imgBg = document.getElementById('imageBackground').value;
+        if (imgBg && imgBg !== 'opaque') cmd += ` --image-background ${imgBg}`;
+      }
+      
+      // Thinking
+      const thinking = document.getElementById('thinking').value;
+      if (thinking) cmd += ` --thinking ${thinking}`;
+      
+      if (document.getElementById('suppressThink').checked) cmd += ' --suppress-think';
+      
+      const thinkStart = document.getElementById('thinkStartTag').value;
+      if (thinkStart) cmd += ` --think-start-tag "${thinkStart}"`;
+      
+      const thinkEnd = document.getElementById('thinkEndTag').value;
+      if (thinkEnd) cmd += ` --think-end-tag "${thinkEnd}"`;
+      
+      // Output options
+      const outputFile = document.getElementById('outputFile').value;
+      if (outputFile) cmd += ` -o "${outputFile}"`;
+      
+      const lang = document.getElementById('language').value;
+      if (lang) cmd += ` -g ${lang}`;
+      
+      const searchLoc = document.getElementById('searchLocation').value;
+      if (searchLoc) cmd += ` --search-location "${searchLoc}"`;
+      
+      if (document.getElementById('outputSession').checked) cmd += ' --output-session';
+      if (document.getElementById('streamOutput').checked) cmd += ' -s';
+      if (document.getElementById('copyOutput').checked) cmd += ' -c';
+      
+      // TTS
+      const voice = document.getElementById('voice').value;
+      if (voice) cmd += ` --voice ${voice}`;
+      
+      // Strategy
+      const strategy = document.getElementById('strategy').value;
+      if (strategy) cmd += ` --strategy ${strategy}`;
+      
+      // Debug
+      const debug = document.getElementById('debugLevel').value;
+      if (debug) cmd += ` --debug ${debug}`;
+      
+      const notifCmd = document.getElementById('notificationCmd').value;
+      if (notifCmd) cmd += ` --notification-command "${notifCmd}"`;
+      
+      if (document.getElementById('notification').checked) cmd += ' --notification';
+      if (document.getElementById('searchEnable').checked) cmd += ' --search';
+      if (document.getElementById('dryRun').checked) cmd += ' --dry-run';
+      if (document.getElementById('disableResponsesApi').checked) cmd += ' --disable-responses-api';
+      
+      document.getElementById('commandPreview').textContent = cmd;
+    }
+
+    // Run fabric
+    async function runFabric() {
+      const status = document.getElementById('status');
+      const stdoutEl = document.getElementById('stdout');
+      const stderrEl = document.getElementById('stderr');
+      const stdoutBoth = document.getElementById('stdout-both');
+      const stderrBoth = document.getElementById('stderr-both');
+      
+      if (!selectedPattern && currentTab === 'text' && !document.getElementById('inputText').value) {
+        alert('Please select a pattern or enter text');
+        return;
+      }
+      
+      status.innerHTML = '<span class="loader"></span> Running...';
+      status.className = 'status status-info';
+      
+      stdoutEl.textContent = 'Processing...';
+      stderrEl.textContent = '';
+      
+      try {
+        const body = {
+          pattern: selectedPattern || null,
+          model: document.getElementById('modelSelect').value || null,
+          vendor: document.getElementById('vendorSelect').value || null,
+          context: document.getElementById('contextSelect').value || null,
+          session: document.getElementById('sessionSelect').value || null,
+          
+          // Model parameters
+          temperature: parseFloat(document.getElementById('temperature').value) || null,
+          top_p: parseFloat(document.getElementById('topP').value) || null,
+          presence_penalty: parseFloat(document.getElementById('presencePenalty').value) || null,
+          frequency_penalty: parseFloat(document.getElementById('frequencyPenalty').value) || null,
+          seed: parseInt(document.getElementById('seed').value) || null,
+          raw_mode: document.getElementById('rawMode').checked,
+          model_context_length: parseInt(document.getElementById('contextLength').value) || null,
+          
+          // Input
+          input_text: currentTab === 'text' ? document.getElementById('inputText').value : null,
+          input_url: currentTab === 'url' ? document.getElementById('inputUrl').value : null,
+          youtube_url: currentTab === 'youtube' ? document.getElementById('youtubeUrl').value : null,
+          attachment: currentTab === 'media' ? document.getElementById('attachmentUrl').value : null,
+          
+          // YouTube advanced
+          youtube_playlist: document.getElementById('ytPlaylist').checked,
+          youtube_transcript_timestamps: document.getElementById('ytTimestamps').checked,
+          youtube_comments: document.getElementById('ytComments').checked,
+          youtube_metadata: document.getElementById('ytMetadata').checked,
+          yt_dlp_args: document.getElementById('ytDlpArgs').value || null,
+          
+          // Web scraping
+          scrape_question: document.getElementById('scrapeQuestion').value || null,
+          readability: document.getElementById('readabilityCheck').checked,
+          search_location: document.getElementById('searchLocation').value || null,
+          
+          // Media
+          transcribe_file: document.getElementById('transcribeFile').value || null,
+          transcribe_model: document.getElementById('transcribeModel').value || null,
+          split_media: document.getElementById('splitMedia').checked,
+          
+          // Image
+          image_file: document.getElementById('imageFile').value || null,
+          image_size: document.getElementById('imageSize').value || null,
+          image_quality: document.getElementById('imageQuality').value || null,
+          image_compression: parseInt(document.getElementById('imageCompression').value) || null,
+          image_background: document.getElementById('imageBackground').value || null,
+          
+          // Thinking
+          thinking: document.getElementById('thinking').value || null,
+          suppress_think: document.getElementById('suppressThink').checked,
+          think_start_tag: document.getElementById('thinkStartTag').value || null,
+          think_end_tag: document.getElementById('thinkEndTag').value || null,
+          
+          // Output
+          output_file: document.getElementById('outputFile').value || null,
+          language: document.getElementById('language').value || null,
+          output_session: document.getElementById('outputSession').checked,
+          stream: document.getElementById('streamOutput').checked,
+          copy: document.getElementById('copyOutput').checked,
+          
+          // TTS
+          voice: document.getElementById('voice').value || null,
+          
+          // Strategy
+          strategy: document.getElementById('strategy').value || null,
+          
+          // Debug
+          debug: parseInt(document.getElementById('debugLevel').value) || null,
+          notification: document.getElementById('notification').checked,
+          notification_command: document.getElementById('notificationCmd').value || null,
+          search: document.getElementById('searchEnable').checked,
+          dry_run: document.getElementById('dryRun').checked,
+          disable_responses_api: document.getElementById('disableResponsesApi').checked
+        };
+        
+        const resp = await fetch('/api/pattern/run', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        
+        const data = await resp.json();
+        
+        if (!resp.ok) {
+          status.textContent = 'Error: ' + (data.detail || 'Unknown error');
+          status.className = 'status status-error';
+          return;
+        }
+        
+        lastOutput = { stdout: data.stdout || '', stderr: data.stderr || '' };
+        
+        stdoutEl.textContent = data.stdout || '(no output)';
+        stderrEl.textContent = data.stderr || '(no errors)';
+        stdoutBoth.textContent = data.stdout || '(no output)';
+        stderrBoth.textContent = data.stderr || '(no errors)';
+        
+        const success = data.returncode === 0;
+        status.textContent = success
+          ? `✓ Success! Exit code: ${data.returncode}`
+          : `✗ Failed with exit code: ${data.returncode}`;
+        status.className = success ? 'status status-success' : 'status status-error';
+        
+      } catch (err) {
+        status.textContent = '✗ Request failed: ' + err.message;
+        status.className = 'status status-error';
+      }
+    }
+
+    // Context/Session management
+    async function manageContextSession(type) {
+      const selectId = type === 'context' ? 'contextSelect' : 'sessionSelect';
+      const selected = document.getElementById(selectId).value;
+      
+      if (!selected) {
+        alert('Please select a ' + type + ' first');
+        return;
+      }
+      
+      const action = prompt(`Manage ${type}: ${selected}\n\n1 - View content\n2 - Delete\n\nEnter choice:`);
+      
+      if (action === '1') {
+        try {
+          const resp = await fetch(`/api/${type}/print?${type}_name=${selected}`);
+          const data = await resp.json();
+          alert(type.toUpperCase() + ' Content:\n\n' + (data.content || data.error || 'Empty'));
+        } catch (err) {
+          alert('Failed: ' + err);
+        }
+      } else if (action === '2') {
+        if (confirm(`Delete ${type} "${selected}"?`)) {
+          try {
+            const resp = await fetch(`/api/${type}/wipe?${type}_name=${selected}`, { method: 'POST' });
+            const data = await resp.json();
+            alert(data.success ? 'Deleted!' : 'Failed: ' + data.message);
+            if (data.success) {
+              if (type === 'context') loadContexts();
+              else loadSessions();
+            }
+          } catch (err) {
+            alert('Failed: ' + err);
+          }
+        }
+      }
+    }
+
+    async function updatePatterns() {
+      if (!confirm('Update patterns from repository?')) return;
+      
+      try {
+        const resp = await fetch('/api/patterns/update', { method: 'POST' });
+        const data = await resp.json();
+        alert(data.success ? 'Patterns updated!' : 'Failed: ' + data.message);
+        if (data.success) loadPatterns();
+      } catch (err) {
+        alert('Failed: ' + err);
+      }
+    }
+
+    // Utility functions
+    function copyOutput() {
+      navigator.clipboard.writeText(lastOutput.stdout).then(() => {
+        alert('Output copied to clipboard!');
+      });
+    }
+
+    function downloadOutput() {
+      const blob = new Blob([lastOutput.stdout], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'fabric-output.txt';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function copyCommand() {
+      const cmd = document.getElementById('commandPreview').textContent;
+      navigator.clipboard.writeText(cmd).then(() => {
+        alert('Command copied to clipboard!');
+      });
+    }
+
+    function clearOutput() {
+      document.getElementById('stdout').textContent = 'Output cleared';
+      document.getElementById('stderr').textContent = '';
+      document.getElementById('stdout-both').textContent = '';
+      document.getElementById('stderr-both').textContent = '';
+    }
+
+    function clearAll() {
+      if (!confirm('Clear all inputs and reset to defaults?')) return;
+      
+      document.getElementById('inputText').value = '';
+      document.getElementById('inputUrl').value = '';
+      document.getElementById('youtubeUrl').value = '';
+      selectedPattern = '';
+      renderPatterns();
+      
+      // Reset all selects to default
+      document.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+      
+      // Reset all checkboxes
+      document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+      
+      // Reset all text inputs
+      document.querySelectorAll('input[type="text"], input[type="number"], input[type="url"]').forEach(i => i.value = '');
+      
+      // Reset sliders
+      document.getElementById('temperature').value = 0.7;
+      document.getElementById('topP').value = 0.9;
+      document.getElementById('presencePenalty').value = 0;
+      document.getElementById('frequencyPenalty').value = 0;
+      
+      updateRangeValue('temperature', 'tempValue');
+      updateRangeValue('topP', 'topPValue');
+      updateRangeValue('presencePenalty', 'presValue');
+      updateRangeValue('frequencyPenalty', 'freqValue');
+      
+      updateCommandPreview();
+    }
+
+    // Initialize on load
+    init();
+  </script>
+</body>
+</html>
