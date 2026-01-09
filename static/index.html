@@ -1178,6 +1178,8 @@
 
     // Run fabric
     async function runFabric() {
+      console.log('[DEBUG] runFabric called, currentTab:', currentTab, 'selectedPattern:', selectedPattern);
+
       const status = document.getElementById('status');
       const stdoutEl = document.getElementById('stdout');
       const stderrEl = document.getElementById('stderr');
@@ -1242,10 +1244,12 @@
 
       // Original structured mode validation
       if (!selectedPattern && currentTab === 'text' && !document.getElementById('inputText').value) {
+        console.log('[DEBUG] Validation failed: no pattern and no text');
         alert('Please select a pattern or enter text');
         return;
       }
 
+      console.log('[DEBUG] Starting fabric execution...');
       status.innerHTML = '<span class="loader"></span> Running...';
       status.className = 'status status-info';
 
@@ -1292,12 +1296,12 @@
           transcribe_model: document.getElementById('transcribeModel').value || null,
           split_media: document.getElementById('splitMedia').checked,
           
-          // Image
+          // Image - only send image parameters if image_file is specified
           image_file: document.getElementById('imageFile').value || null,
-          image_size: document.getElementById('imageSize').value || null,
-          image_quality: document.getElementById('imageQuality').value || null,
-          image_compression: parseInt(document.getElementById('imageCompression').value) || null,
-          image_background: document.getElementById('imageBackground').value || null,
+          image_size: document.getElementById('imageFile').value ? (document.getElementById('imageSize').value || null) : null,
+          image_quality: document.getElementById('imageFile').value ? (document.getElementById('imageQuality').value || null) : null,
+          image_compression: document.getElementById('imageFile').value ? (parseInt(document.getElementById('imageCompression').value) || null) : null,
+          image_background: document.getElementById('imageFile').value ? (document.getElementById('imageBackground').value || null) : null,
           
           // Thinking
           thinking: document.getElementById('thinking').value || null,
@@ -1327,13 +1331,17 @@
           disable_responses_api: document.getElementById('disableResponsesApi').checked
         };
         
+        console.log('[DEBUG] Sending request to /api/pattern/run with body:', body);
+
         const resp = await fetch('/api/pattern/run', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(body)
         });
-        
+
+        console.log('[DEBUG] Response status:', resp.status);
         const data = await resp.json();
+        console.log('[DEBUG] Response data:', data);
         
         if (!resp.ok) {
           status.textContent = 'Error: ' + (data.detail || 'Unknown error');
@@ -1355,6 +1363,7 @@
         status.className = success ? 'status status-success' : 'status status-error';
         
       } catch (err) {
+        console.error('[DEBUG] Error in runFabric:', err);
         status.textContent = '✗ Request failed: ' + err.message;
         status.className = 'status status-error';
       }
